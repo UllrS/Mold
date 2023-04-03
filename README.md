@@ -29,6 +29,9 @@ equivalent declaration
 ***
 
 ### Valid Key Operators
+```go
+<-, <!, <<, =-, =!, ==
+```
 ##### "=-" Passes a value to the form only if it is found in the source, matches the value type, and is on the same level as the form, otherwise leaves the form's value. Child objects are filled recursively and only dynamic values.
 ```go
 { "name=-": "...", "last_name=-second_name": "..." }
