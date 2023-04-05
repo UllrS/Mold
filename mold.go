@@ -1,3 +1,4 @@
+// package mold implements support for dynamic JSON keys and pattern-matched object structure transformation
 package mold
 
 import (
