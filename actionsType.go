@@ -1,13 +1,5 @@
 package mold
 
-import (
-	"fmt"
-)
-
-// WriteAttempt = "<-" //Передает значения в форму, только если оно найдено в доноре и соответствует тип значения, иначе оставляет значение формы. Дочерние объекты заполняются рекурсивно и только динамические значения
-// WriteForce   = "<!" //Если не найдено значение в доноре - возвращается null.
-// WriteHarsh   = "<=" //Передает значение в форму, вне зависимости от типов. Дочерние объекты передаются полностью, без рекурсивного заполнения
-// WriteAll
 func actionMap(mold, obj map[string]interface{}, key *Key, source interface{}) interface{} {
 	if key.Separator == WriteAttempt {
 		if objValue, ok := obj[key.FillerKey].(map[string]interface{}); ok {
@@ -115,7 +107,6 @@ func actionBool(mold bool, obj map[string]interface{}, key *Key, source interfac
 func actionFloat(mold float64, obj map[string]interface{}, key *Key, source interface{}) interface{} {
 	if key.Separator == WriteAttempt {
 		if objValue, ok := obj[key.FillerKey]; ok {
-			fmt.Println("FLOAT 64 ", key.FillerKey, ":", mold, ":", obj[key.FillerKey])
 			if _, ok := objValue.(float64); ok || (objValue == nil) {
 				return objValue
 			}

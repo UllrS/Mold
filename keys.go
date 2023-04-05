@@ -1,7 +1,6 @@
 package mold
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -43,6 +42,5 @@ func splitKey(key string) (*Key, error) {
 		FillerKey: fillerKey,
 		Separator: separator,
 	}
-	fmt.Println("separator ", separator)
 	return &keym, nil
 }

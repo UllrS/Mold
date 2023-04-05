@@ -33,7 +33,7 @@ func fillList(sourceList []interface{}, moldList []interface{}, source interface
 		return sourceList
 	}
 	moldFirst := moldList[0]
-	newList := []interface{}{}
+	var newList []interface{}
 	for _, val := range sourceList {
 		if reflect.TypeOf(val) != reflect.TypeOf(moldFirst) {
 			continue
@@ -125,24 +125,3 @@ func findFieldList(list []interface{}, field string, defValue interface{}) (inte
 	return defValue, false
 
 }
-
-// func findFieldWide(obj map[string]interface{}, field string, defValue interface{}) (interface{}, bool) {
-// 	for key, val := range obj {
-// 		if key == field {
-// 			return val, true
-// 		} else if sub, ok := val.(map[string]interface{}); ok {
-// 			if f, change := findFieldWide(sub, field, defValue); change {
-// 				return f, change
-// 			}
-// 		} else if sub, ok := val.([]interface{}); ok {
-// 			for _, el := range sub {
-// 				if subi, ok := el.(map[string]interface{}); ok {
-// 					if f, change := findFieldWide(subi, field, defValue); change {
-// 						return f, change
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// 	return defValue, false
-// }

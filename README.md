@@ -26,6 +26,8 @@ equivalent declaration
 ```
 #### Result:
     >>>{"first_name":"John","gadgets":["tablet","phone","laptop"],"job":{"job_title":"administrator","stack":"programmer"}}%
+
+> Pay attention to the rules for filling arrays: how the sample is used the first element of the mold array and all elements of the source array are compared with it
 ***
 
 ### Valid Key Operators

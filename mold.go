@@ -1,22 +1,26 @@
+// package mold implements support for dynamic JSON keys and pattern-matched object structure transformation
 package mold
 
 import (
 	"encoding/json"
 	"errors"
+	"reflect"
 )
 
 var (
-	ErrNotFound = errors.New("Not found")
+	ErrNotFound       = errors.New("not found")
+	ErrNotSupported   = errors.New("source type not supported")
+	ErrdifferentTypes = errors.New("source and mold have different types")
 )
 
 var (
-	WriteAttempt = "=-" //Передает значения в форму, только если оно найдено в источнике, соответствует тип значения и находится на одном уровне с формой, иначе оставляет значение формы. Дочерние объекты заполняются рекурсивно и только динамические значения.
-	WriteForce   = "=!" //Передает значения в форму, только если оно найдено в источнике, соответствует тип значения и находится на одном уровне с формой, иначе передается значение null. Дочерние объекты заполняются рекурсивно и только динамические значения.
-	WriteHarsh   = "==" //Передает значение в форму, вне зависимости от типов. Дочерние объекты передаются полностью, без рекурсивного анализа.  Рекомендуем использовать, если вы ожидаете в значении примитив неизвестного типа.
+	WriteAttempt = "=-" //Passes a value to the form only if it is found in the source, matches the value type, and is on the same level as the form, otherwise leaves the form's value. Child objects are filled recursively and only dynamic values.
+	WriteForce   = "=!" //Passes a value to the form only if it is found in the source, matches the value type, and is at the same level as the form, otherwise null is passed. Child objects are filled recursively and only dynamic values.
+	WriteHarsh   = "==" //Passes a value to the form, regardless of types. Child objects are passed in their entirety, without recursive parsing. Recommended if you are expecting a primitive of unknown type in the value.
 
-	WriteAttemptAll = "<-" //Поиск значения по ключу по всему источнику, включая дочерние и родительские объекты. Передает значение в форму, вне зависимости от типов. Дочерние объекты и массивы так же обрабатываются для поиска динамических ключей. При отсутствии значения в источнике возвращается значение в форме
-	WriteForceAll   = "<!" //Поиск значения по ключу по всему источнику, включая дочерние и родительские объекты. Передает значение в форму, вне зависимости от типов. Дочерние объекты и массивы так же обрабатываются для поиска динамических ключей. При отсутствии значения в источнике возвращается значение null
-	WriteHarshAll   = "<<" //Поиск значения по ключу по всему источнику, включая дочерние и родительские объекты. Передает значение в форму, вне зависимости от типов. Дочерние объекты и массивы передаются полностью, без рекурсивного анализа. Рекомендуем использовать если вы ожидаете в значении примитив неизвестного типа.
+	WriteAttemptAll = "<-" //Search for a value by key throughout the source, including child and parent objects. Passes a value to the form, regardless of types. Child objects and arrays are also processed to find dynamic keys. If there is no value in the source, a value is returned in the form
+	WriteForceAll   = "<!" //Search for a value by key throughout the source, including child and parent objects. Passes a value to the form, regardless of types. Child objects and arrays are also processed to find dynamic keys. If there is no value in the source, null is returned.
+	WriteHarshAll   = "<<" //Search for a value by key throughout the source, including child and parent objects. Passes a value to the form, regardless of types. Child objects and arrays are passed in full, without recursive parsing. It is recommended to use if you are expecting a primitive of an unknown type in the value.
 )
 
 func Fill(source, mold []byte) ([]byte, error) {
@@ -32,8 +36,14 @@ func Fill(source, mold []byte) ([]byte, error) {
 		Source: sourceEq,
 		Mold:   moldEq,
 	}
-	fillMold := filler.Fill()
+	fillMold, err := filler.Fill()
+	if err != nil {
+		return nil, err
+	}
 	fillMoldByte, err := json.Marshal(fillMold)
+	if err != nil {
+		return nil, err
+	}
 	return fillMoldByte, nil
 }
 func typeReduction(data []byte) (interface{}, error) {
@@ -50,12 +60,15 @@ type Filler struct {
 	Mold   interface{}
 }
 
-func (f *Filler) Fill() interface{} {
+func (f *Filler) Fill() (interface{}, error) {
+	if reflect.TypeOf(f.Source) != reflect.TypeOf(f.Mold) {
+		return nil, ErrdifferentTypes
+	}
 	if res, ok := f.Source.(map[string]interface{}); ok {
-		return fillObj(res, f.Mold.(map[string]interface{}), f.Source)
+		return fillObj(res, f.Mold.(map[string]interface{}), f.Source), nil
 	} else if res, ok := f.Source.([]interface{}); ok {
-		return fillList(res, f.Mold.([]interface{}), f.Source)
+		return fillList(res, f.Mold.([]interface{}), f.Source), nil
 	} else {
-		return nil
+		return nil, ErrNotSupported
 	}
 }
