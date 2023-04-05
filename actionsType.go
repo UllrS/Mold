@@ -4,23 +4,19 @@ import (
 	"fmt"
 )
 
-// WriteAttempt = "<-" //Передает значения в форму, только если оно найдено в доноре и соответствует тип значения, иначе оставляет значение формы. Дочерние объекты заполняются рекурсивно и только динамические значения
-// WriteForce   = "<!" //Если не найдено значение в доноре - возвращается null.
-// WriteHarsh   = "<=" //Передает значение в форму, вне зависимости от типов. Дочерние объекты передаются полностью, без рекурсивного заполнения
-// WriteAll
 func actionMap(mold, obj map[string]interface{}, key *Key, source interface{}) interface{} {
 	if key.Separator == WriteAttempt {
 		if objValue, ok := obj[key.FillerKey].(map[string]interface{}); ok {
 			return fillObj(objValue, mold, source)
-		} else {
-			return fillObj(mold, mold, source)
 		}
+		return fillObj(mold, mold, source)
+
 	} else if key.Separator == WriteForce {
 		if objValue, ok := obj[key.FillerKey].(map[string]interface{}); ok {
 			return fillObj(objValue, mold, source)
-		} else {
-			return nil
 		}
+		return nil
+
 	} else if key.Separator == WriteHarsh {
 		return obj[key.FillerKey]
 	} else if key.Separator == WriteAttemptAll {
@@ -48,15 +44,14 @@ func actionList(mold []interface{}, obj map[string]interface{}, key *Key, source
 	if key.Separator == WriteAttempt {
 		if objValue, ok := obj[key.FillerKey].([]interface{}); ok {
 			return fillList(objValue, mold, source)
-		} else {
-			return fillList(mold, mold, source)
 		}
+		return fillList(mold, mold, source)
 	} else if key.Separator == WriteForce {
 		if objValue, ok := obj[key.FillerKey].([]interface{}); ok {
 			return fillList(objValue, mold, source)
-		} else {
-			return []interface{}{}
 		}
+		return []interface{}{}
+
 	} else if key.Separator == WriteHarsh {
 		return obj[key.FillerKey]
 	} else if key.Separator == WriteAttemptAll {
@@ -153,15 +148,13 @@ func actionString(mold string, obj map[string]interface{}, key *Key, source inte
 	if key.Separator == WriteAttempt {
 		if objValue, ok := obj[key.FillerKey].(string); ok {
 			return objValue
-		} else {
-			return mold
 		}
+		return mold
 	} else if key.Separator == WriteForce {
 		if objValue, ok := obj[key.FillerKey].(string); ok {
 			return objValue
-		} else {
-			return nil
 		}
+		return nil
 
 	} else if key.Separator == WriteHarsh {
 		return obj[key.FillerKey]

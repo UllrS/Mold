@@ -5,43 +5,43 @@ import (
 )
 
 func fillObj(obj, mold map[string]interface{}, source interface{}) map[string]interface{} {
-	newJson := map[string]interface{}{}
+	newJSON := map[string]interface{}{}
 
 	for jkey, val := range mold {
 		key, err := splitKey(jkey)
 		if err != nil {
-			newJson[jkey] = val
+			newJSON[jkey] = val
 			continue
 		} else if val == nil {
-			newJson[key.MoldKey] = actionNil(obj, key, source)
+			newJSON[key.MoldKey] = actionNil(obj, key, source)
 		} else if res, ok := val.(map[string]interface{}); ok {
-			newJson[key.MoldKey] = actionMap(res, obj, key, source)
+			newJSON[key.MoldKey] = actionMap(res, obj, key, source)
 		} else if res, ok := val.([]interface{}); ok {
-			newJson[key.MoldKey] = actionList(res, obj, key, source)
+			newJSON[key.MoldKey] = actionList(res, obj, key, source)
 		} else if res, ok := val.(string); ok {
-			newJson[key.MoldKey] = actionString(res, obj, key, source)
+			newJSON[key.MoldKey] = actionString(res, obj, key, source)
 		} else if res, ok := val.(bool); ok {
-			newJson[key.MoldKey] = actionBool(res, obj, key, source)
+			newJSON[key.MoldKey] = actionBool(res, obj, key, source)
 		} else if res, ok := val.(float64); ok {
-			newJson[key.MoldKey] = actionFloat(res, obj, key, source)
+			newJSON[key.MoldKey] = actionFloat(res, obj, key, source)
 		}
 	}
-	return newJson
+	return newJSON
 }
 func fillList(sourceList []interface{}, moldList []interface{}, source interface{}) []interface{} {
 	if len(moldList) < 1 || len(sourceList) < 1 {
 		return sourceList
 	}
 	moldFirst := moldList[0]
-	newList := []interface{}{}
+	var newList []interface{}
 	for _, val := range sourceList {
 		if reflect.TypeOf(val) != reflect.TypeOf(moldFirst) {
 			continue
 		}
 		if res, ok := val.(map[string]interface{}); ok {
 			if mold, ok := moldFirst.(map[string]interface{}); ok {
-				newJson := fillObj(res, mold, source)
-				newList = append(newList, newJson)
+				newJSON := fillObj(res, mold, source)
+				newList = append(newList, newJSON)
 			}
 		} else if res, ok := val.([]interface{}); ok {
 			if mold, ok := moldFirst.([]interface{}); ok {
@@ -125,24 +125,3 @@ func findFieldList(list []interface{}, field string, defValue interface{}) (inte
 	return defValue, false
 
 }
-
-// func findFieldWide(obj map[string]interface{}, field string, defValue interface{}) (interface{}, bool) {
-// 	for key, val := range obj {
-// 		if key == field {
-// 			return val, true
-// 		} else if sub, ok := val.(map[string]interface{}); ok {
-// 			if f, change := findFieldWide(sub, field, defValue); change {
-// 				return f, change
-// 			}
-// 		} else if sub, ok := val.([]interface{}); ok {
-// 			for _, el := range sub {
-// 				if subi, ok := el.(map[string]interface{}); ok {
-// 					if f, change := findFieldWide(subi, field, defValue); change {
-// 						return f, change
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// 	return defValue, false
-// }
