@@ -5,28 +5,28 @@ import (
 )
 
 func fillObj(obj, mold map[string]interface{}, source interface{}) map[string]interface{} {
-	newJson := map[string]interface{}{}
+	newJSON := map[string]interface{}{}
 
 	for jkey, val := range mold {
 		key, err := splitKey(jkey)
 		if err != nil {
-			newJson[jkey] = val
+			newJSON[jkey] = val
 			continue
 		} else if val == nil {
-			newJson[key.MoldKey] = actionNil(obj, key, source)
+			newJSON[key.MoldKey] = actionNil(obj, key, source)
 		} else if res, ok := val.(map[string]interface{}); ok {
-			newJson[key.MoldKey] = actionMap(res, obj, key, source)
+			newJSON[key.MoldKey] = actionMap(res, obj, key, source)
 		} else if res, ok := val.([]interface{}); ok {
-			newJson[key.MoldKey] = actionList(res, obj, key, source)
+			newJSON[key.MoldKey] = actionList(res, obj, key, source)
 		} else if res, ok := val.(string); ok {
-			newJson[key.MoldKey] = actionString(res, obj, key, source)
+			newJSON[key.MoldKey] = actionString(res, obj, key, source)
 		} else if res, ok := val.(bool); ok {
-			newJson[key.MoldKey] = actionBool(res, obj, key, source)
+			newJSON[key.MoldKey] = actionBool(res, obj, key, source)
 		} else if res, ok := val.(float64); ok {
-			newJson[key.MoldKey] = actionFloat(res, obj, key, source)
+			newJSON[key.MoldKey] = actionFloat(res, obj, key, source)
 		}
 	}
-	return newJson
+	return newJSON
 }
 func fillList(sourceList []interface{}, moldList []interface{}, source interface{}) []interface{} {
 	if len(moldList) < 1 || len(sourceList) < 1 {
@@ -40,8 +40,8 @@ func fillList(sourceList []interface{}, moldList []interface{}, source interface
 		}
 		if res, ok := val.(map[string]interface{}); ok {
 			if mold, ok := moldFirst.(map[string]interface{}); ok {
-				newJson := fillObj(res, mold, source)
-				newList = append(newList, newJson)
+				newJSON := fillObj(res, mold, source)
+				newList = append(newList, newJSON)
 			}
 		} else if res, ok := val.([]interface{}); ok {
 			if mold, ok := moldFirst.([]interface{}); ok {
