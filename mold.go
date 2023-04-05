@@ -34,7 +34,7 @@ func Fill(source, mold []byte) ([]byte, error) {
 	}
 	fillMold := filler.Fill()
 	fillMoldByte, err := json.Marshal(fillMold)
-	return fillMoldByte, nil
+	return fillMoldByte, err
 }
 func typeReduction(data []byte) (interface{}, error) {
 	var equivalent interface{}
