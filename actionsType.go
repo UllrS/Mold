@@ -4,10 +4,6 @@ import (
 	"fmt"
 )
 
-// WriteAttempt = "<-" //Передает значения в форму, только если оно найдено в доноре и соответствует тип значения, иначе оставляет значение формы. Дочерние объекты заполняются рекурсивно и только динамические значения
-// WriteForce   = "<!" //Если не найдено значение в доноре - возвращается null.
-// WriteHarsh   = "<=" //Передает значение в форму, вне зависимости от типов. Дочерние объекты передаются полностью, без рекурсивного заполнения
-// WriteAll
 func actionMap(mold, obj map[string]interface{}, key *Key, source interface{}) interface{} {
 	if key.Separator == WriteAttempt {
 		if objValue, ok := obj[key.FillerKey].(map[string]interface{}); ok {
