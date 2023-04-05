@@ -33,7 +33,7 @@ func fillList(sourceList []interface{}, moldList []interface{}, source interface
 		return sourceList
 	}
 	moldFirst := moldList[0]
-	newList := []interface{}{}
+	var newList []interface{}
 	for _, val := range sourceList {
 		if reflect.TypeOf(val) != reflect.TypeOf(moldFirst) {
 			continue
